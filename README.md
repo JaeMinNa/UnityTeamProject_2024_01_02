@@ -49,7 +49,76 @@
 </p>
 <br/>
 
-## 🎮 구현기능
+## ✏️ 구현 기능
+
+### 1. 총기 구현
+<img src="https://github.com/JaeMinNa/Ocean_Bloom/assets/149379194/189c6289-ef59-4bbf-bb83-c61ff3c56f15" width="50%"/>
+
+- Physics.Raycast로 총알 프리팹 생성 없이 총기 구현
+```C#
+if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out _hitInfo, 50f))
+{
+    Debug.Log(_hitInfo.transform.name);
+}
+```
+- MainCamera의 rotation 값을 변경해서 총기 반동을 구현
+```C#
+IEnumerator CORetroAction()
+{
+    Vector3 recoilBack = new Vector3(CurrentGun.OriginPos.x, CurrentGun.OriginPos.y, CurrentGun.OriginPos.z - CurrentGun.RetroActionForce);
+    CurrentGun.transform.localPosition = CurrentGun.OriginPos;
+
+    // 반동 시작
+    while (CurrentGun.transform.localPosition.z >= CurrentGun.OriginPos.z - CurrentGun.RetroActionForce + 0.02f)
+    {
+        CurrentGun.transform.localPosition = Vector3.Lerp(CurrentGun.transform.localPosition, recoilBack, 0.4f);
+        _pov.m_VerticalAxis.Value += -CurrentGun.RetroActionForce;
+        yield return null;
+    }
+
+    // 원위치
+    while (CurrentGun.transform.localPosition != CurrentGun.OriginPos)
+    {
+        CurrentGun.transform.localPosition = Vector3.Lerp(CurrentGun.transform.localPosition, CurrentGun.OriginPos, 0.1f);
+        yield return null;
+    }
+}
+```
+- Raycast의 시작점에서 일정한 랜덤 값을 더해서 총기 정확도 구현
+```C#
+private void Hit()
+{
+     Vector3 randomRange = new Vector3(Random.Range(-CurrentGun.Accuracy, CurrentGun.Accuracy), Random.Range(-CurrentGun.Accuracy, CurrentGun.Accuracy), 0);
+
+     if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward + randomRange, out _hitInfo, CurrentGun.Range))
+     {
+          Debug.Log(_hitInfo.transform.name);
+     }
+}
+```
+<br/>
+
+### 2. 총기 교체 구현
+<img src="https://github.com/JaeMinNa/Ocean_Bloom/assets/149379194/189c6289-ef59-4bbf-bb83-c61ff3c56f15" width="50%"/>
+
+- 총 아이템을 먹으면 무기가 교체되도록 구현
+```C#
+public void EquipM4()
+{
+    foreach(GameObject gun in _gunHolders)
+    {
+        gun.SetActive(false);
+    }
+
+    CurrentGun = _gunHolders[1].GetComponent<Gun>();
+    _gunHolders[1].SetActive(true);
+}
+```
+- Player의 자식에 있는 GunHolder에서 해당 무기가 SetActive(true) 설정, 기존 무기는 SetActive(false)
+
+
+
+## 🎮 전체 구현 기능
 * 캐릭터의 이동 및 기본 동작
   * 캐릭터, 몬스터 FSM 구현
   * W/A/S/D 이동 구현
@@ -80,3 +149,5 @@
   * 마우스 좌 클릭으로 총 발사
   * 총기 반동, 정확도 구현
 <br/>
+
+
