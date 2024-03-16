@@ -156,10 +156,12 @@ IEnumerator CORetroAction()
     }
 }
 ```
+<br/>
 
 ### 2. Physics.Raycast의 방향을 조절한 총기 정확도 구현
 - 기존 Raycast의 시작점에서 일정한 랜덤 값을 더해서 구현한 방법은 멀리 있는 물체를 쏠 때보다 가까이 있는 물체를 쏠 때, 정확도가 더 낮아짐
 <img src="https://github.com/JaeMinNa/Ocean_Bloom/assets/149379194/c86b3603-12c6-43a4-a631-2636a58f62bc" width="50%"/>
+
 ```C#
 private void Hit()
 {
@@ -174,6 +176,7 @@ private void Hit()
 - 거리가 가까울수록 MainCamera의 중앙에서 벗어나는 실제 거리가 멀어짐
 - Raycast의 방향을 바꾸는 방법으로 멀어질수록 총기 정확도가 낮아지도록 개선
 <img src="https://github.com/JaeMinNa/Ocean_Bloom/assets/149379194/bd449d77-a326-47b6-89b8-4babd59688fd" width="50%"/>
+
 ```C#
 private void Hit()
 {
@@ -185,7 +188,7 @@ private void Hit()
     }
 }
 ```
-
+<br/>
 
 ## 🎮 전체 구현 기능
 * 캐릭터의 이동 및 기본 동작
