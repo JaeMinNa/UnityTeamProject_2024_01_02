@@ -61,7 +61,7 @@ if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forwar
     Debug.Log(_hitInfo.transform.name);
 }
 ```
-- MainCamera의 rotation 값을 변경해서 총기 반동을 구현
+- 카메라 rotation 값을 변경해서 총기 반동을 구현
 ```C#
 IEnumerator CORetroAction()
 {
