@@ -61,6 +61,7 @@ if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forwar
     Debug.Log(_hitInfo.transform.name);
 }
 ```
+
 - 카메라 rotation 값을 변경해서 총기 반동을 구현
 ```C#
 IEnumerator CORetroAction()
@@ -84,6 +85,7 @@ IEnumerator CORetroAction()
     }
 }
 ```
+
 - Raycast의 시작점에서 일정한 랜덤 값을 더해서 총기 정확도 구현
 ```C#
 private void Hit()
@@ -114,6 +116,7 @@ public void EquipM4()
     _gunHolders[1].SetActive(true);
 }
 ```
+
 - Player의 자식에 있는 GunHolder에서 해당 무기가 SetActive(true) 설정, 기존 무기는 SetActive(false)
 <br/>
 
@@ -173,6 +176,7 @@ private void Hit()
     }
 }
 ```
+
 - 거리가 가까울수록 MainCamera의 중앙에서 벗어나는 실제 거리가 멀어짐
 - Raycast의 방향을 바꾸는 방법으로 멀어질수록 총기 정확도가 낮아지도록 개선
 <img src="https://github.com/JaeMinNa/Ocean_Bloom/assets/149379194/bd449d77-a326-47b6-89b8-4babd59688fd" width="50%"/>
