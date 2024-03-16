@@ -100,7 +100,6 @@ private void Hit()
 
 ### 2. 총기 교체 구현
 <img src="https://github.com/JaeMinNa/Ocean_Bloom/assets/149379194/bbb79a30-6e92-4124-bd3c-720e275679a1" width="50%"/>
-<br/>
 
 - 총 아이템을 먹으면 무기가 교체되도록 구현
 ```C#
@@ -123,7 +122,6 @@ public void EquipM4()
 ### 1. VirtualCamera의 총기 반동 구현
 - MainCamera의 rotation 값을 변경해도 카메라 회전이 적용되지 않음
  <img src="https://github.com/JaeMinNa/Ocean_Bloom/assets/149379194/1f8fd08a-bed3-42cd-92e5-32bc33194c86" width="50%"/>
- <br/>
 
 ```C#
 while (_currentGun.transform.localPosition.z >= _originPos.z - _currentGun.RetroActionForce + 0.02f)
@@ -136,7 +134,6 @@ while (_currentGun.transform.localPosition.z >= _originPos.z - _currentGun.Retro
  
 - Player가 시네머신 카메라를 사용하기 때문에 VirtualCamera에 접근해서 CinemachinePOV의 VerticalAxis 값을 변경
 <img src="https://github.com/JaeMinNa/Ocean_Bloom/assets/149379194/d7b8cf0c-625d-4e5a-926c-baaccd155e6b" width="50%"/>
-<br/>
 
 ```C#
 using Cinemachine;
@@ -164,7 +161,6 @@ IEnumerator CORetroAction()
 ### 2. Physics.Raycast의 방향을 조절한 총기 정확도 구현
 - 기존 Raycast의 시작점에서 일정한 랜덤 값을 더해서 구현한 방법은 멀리 있는 물체를 쏠 때보다 가까이 있는 물체를 쏠 때, 정확도가 더 낮아짐
 <img src="https://github.com/JaeMinNa/Ocean_Bloom/assets/149379194/c86b3603-12c6-43a4-a631-2636a58f62bc" width="50%"/>
-<br/>
 
 ```C#
 private void Hit()
@@ -180,7 +176,6 @@ private void Hit()
 - 거리가 가까울수록 MainCamera의 중앙에서 벗어나는 실제 거리가 멀어짐
 - Raycast의 방향을 바꾸는 방법으로 멀어질수록 총기 정확도가 낮아지도록 개선
 <img src="https://github.com/JaeMinNa/Ocean_Bloom/assets/149379194/bd449d77-a326-47b6-89b8-4babd59688fd" width="50%"/>
-<br/>
 
 ```C#
 private void Hit()
