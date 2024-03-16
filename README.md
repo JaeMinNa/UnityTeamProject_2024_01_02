@@ -52,7 +52,7 @@
 ## ✏️ 구현 기능
 
 ### 1. 총기 구현
-<img src="https://github.com/JaeMinNa/Ocean_Bloom/assets/149379194/189c6289-ef59-4bbf-bb83-c61ff3c56f15" width="50%"/>
+<img src="https://github.com/JaeMinNa/Ocean_Bloom/assets/149379194/c9e5fc85-379d-4666-a2f8-c4e55928fdaa" width="50%"/>
 
 - Physics.Raycast로 총알 프리팹 생성 없이 총기 구현
 ```C#
@@ -88,18 +88,18 @@ IEnumerator CORetroAction()
 ```C#
 private void Hit()
 {
-     Vector3 randomRange = new Vector3(Random.Range(-CurrentGun.Accuracy, CurrentGun.Accuracy), Random.Range(-CurrentGun.Accuracy, CurrentGun.Accuracy), 0);
+    Vector3 randomRange = new Vector3(Random.Range(-_currentGun.Accuracy, _currentGun.Accuracy), Random.Range(-_currentGun.Accuracy, _currentGun.Accuracy), 0);
 
-     if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward + randomRange, out _hitInfo, CurrentGun.Range))
-     {
-          Debug.Log(_hitInfo.transform.name);
-     }
+    if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward + randomRange, out _hitInfo, _currentGun.Range))
+    {
+        GameObject clone = Instantiate(_currentGun.HitEffectPrefab, _hitInfo.point, Quaternion.LookRotation(_hitInfo.normal));
+    }
 }
 ```
 <br/>
 
 ### 2. 총기 교체 구현
-<img src="https://github.com/JaeMinNa/Ocean_Bloom/assets/149379194/189c6289-ef59-4bbf-bb83-c61ff3c56f15" width="50%"/>
+<img src="https://github.com/JaeMinNa/Ocean_Bloom/assets/149379194/bbb79a30-6e92-4124-bd3c-720e275679a1" width="50%"/>
 
 - 총 아이템을 먹으면 무기가 교체되도록 구현
 ```C#
@@ -115,7 +115,76 @@ public void EquipM4()
 }
 ```
 - Player의 자식에 있는 GunHolder에서 해당 무기가 SetActive(true) 설정, 기존 무기는 SetActive(false)
+<br/>
 
+## 💥 트러블 슈팅
+
+### 1. VirtualCamera의 총기 반동 구현
+- MainCamera의 rotation 값을 변경해도 카메라 회전이 적용되지 않음
+ <img src="https://github.com/JaeMinNa/Ocean_Bloom/assets/149379194/1f8fd08a-bed3-42cd-92e5-32bc33194c86" width="50%"/>
+
+```C#
+while (_currentGun.transform.localPosition.z >= _originPos.z - _currentGun.RetroActionForce + 0.02f)
+{
+    _currentGun.transform.localPosition = Vector3.Lerp(_currentGun.transform.localPosition, recoilBack, 0.4f);
+    Camera.main.transform.localEulerAngles += new Vector3(-10, 0, 0);
+    yield return null;
+}
+```
+ 
+- Player가 시네머신 카메라를 사용하기 때문에 VirtualCamera에 접근해서 CinemachinePOV의 VerticalAxis 값을 변경
+<img src="https://github.com/JaeMinNa/Ocean_Bloom/assets/149379194/d7b8cf0c-625d-4e5a-926c-baaccd155e6b" width="50%"/>
+
+```C#
+using Cinemachine;
+
+[SerializeField] private CinemachineVirtualCamera _virtualCamera;
+private CinemachinePOV _pov;
+
+private void Awake()
+{
+    _pov = _virtualCamera.GetCinemachineComponent<CinemachinePOV>();
+}
+
+IEnumerator CORetroAction()
+{
+    while (_currentGun.transform.localPosition.z >= _originPos.z - _currentGun.RetroActionForce + 0.02f)
+    {
+        _currentGun.transform.localPosition = Vector3.Lerp(_currentGun.transform.localPosition, recoilBack, 0.4f);
+        _pov.m_VerticalAxis.Value += -_currentGun.RetroActionForce;
+        yield return null;
+    }
+}
+```
+
+### 2. Physics.Raycast의 방향을 조절한 총기 정확도 구현
+- 기존 Raycast의 시작점에서 일정한 랜덤 값을 더해서 구현한 방법은 멀리 있는 물체를 쏠 때보다 가까이 있는 물체를 쏠 때, 정확도가 더 낮아짐
+<img src="https://github.com/JaeMinNa/Ocean_Bloom/assets/149379194/c86b3603-12c6-43a4-a631-2636a58f62bc" width="50%"/>
+```C#
+private void Hit()
+{
+    Vector3 randomRange = new Vector3(Random.Range(-_currentGun.Accuracy, _currentGun.Accuracy), Random.Range(-_currentGun.Accuracy, _currentGun.Accuracy), Random.Range(-_currentGun.Accuracy, _currentGun.Accuracy));
+
+    if (Physics.Raycast(Camera.main.transform.position + randomRange, Camera.main.transform.forward, out _hitInfo, _currentGun.Range))
+    {
+        GameObject clone = Instantiate(_currentGun.HitEffectPrefab, _hitInfo.point, Quaternion.LookRotation(_hitInfo.normal));
+    }
+}
+```
+- 거리가 가까울수록 MainCamera의 중앙에서 벗어나는 실제 거리가 멀어짐
+- Raycast의 방향을 바꾸는 방법으로 멀어질수록 총기 정확도가 낮아지도록 개선
+<img src="https://github.com/JaeMinNa/Ocean_Bloom/assets/149379194/bd449d77-a326-47b6-89b8-4babd59688fd" width="50%"/>
+```C#
+private void Hit()
+{
+    Vector3 randomRange = new Vector3(Random.Range(-_currentGun.Accuracy, _currentGun.Accuracy), Random.Range(-_currentGun.Accuracy, _currentGun.Accuracy), 0);
+
+    if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward + randomRange, out _hitInfo, _currentGun.Range))
+    {
+        GameObject clone = Instantiate(_currentGun.HitEffectPrefab, _hitInfo.point, Quaternion.LookRotation(_hitInfo.normal));
+    }
+}
+```
 
 
 ## 🎮 전체 구현 기능
