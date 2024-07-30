@@ -86,7 +86,7 @@ IEnumerator CORetroAction()
 }
 ```
 
-- Raycast의 시작점에서 일정한 랜덤 값을 더해서 총기 정확도 구현
+- Raycast의 뱡향에 일정한 랜덤 값을 더해서 총기 정확도 구현
 ```C#
 private void Hit()
 {
